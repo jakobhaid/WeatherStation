@@ -39,7 +39,7 @@ Dieses Arduino-Projekt implementiert eine Wetterstation, die die Sensoren BME680
 
 ### 3D-Druck für Gehäuse
 
-Das Gehäuse für die Wetterstation kann über folgenden Link heruntergeladen werden: [Link zur 3D-Druck Datei](3dmodel).
+Das Gehäuse für die Wetterstation kann über folgenden Link heruntergeladen werden: ![Link zur 3D-Druck Datei](3dmodel).
 
 ## Lizenz
 Dieses Projekt ist unter der [Creative Commons Attribution-NonCommercial 4.0 International License](https://creativecommons.org/licenses/by-nc/4.0/) lizenziert. Das bedeutet, dass du das Material teilen und bearbeiten kannst, solange du es nicht für kommerzielle Zwecke nutzt und mich als Urheber angibst.
