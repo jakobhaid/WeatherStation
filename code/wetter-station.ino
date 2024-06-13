@@ -8,6 +8,7 @@
 
 #include <Fonts/FreeMono9pt7b.h>
 #include <Fonts/FreeMono12pt7b.h>
+#include <Fonts/FreeMonoBold12pt7b.h>
 
 //BME688
 #define BME_SDA D4
@@ -34,6 +35,10 @@ float temp28(NAN),   hum28(NAN),   pres28(NAN);
 #define SERIAL_DEBUG_BEGIN()   do { if (Serial) { Serial.begin(9600); while (!Serial); } } while (0)
 #define SERIAL_PRINT(...)      do { if (Serial) { Serial.print(__VA_ARGS__); } } while (0)
 #define SERIAL_PRINTLN(...)    do { if (Serial) { Serial.println(__VA_ARGS__); } } while (0)
+
+// Deep Sleep
+#define uS_TO_S_FACTOR 1000000ULL  /* Conversion factor for micro seconds to seconds */
+#define TIME_TO_SLEEP  600        /* Time ESP32 will go to sleep (in seconds) */
 
 void setup() {
   delay(1000);
@@ -64,7 +69,7 @@ void setup() {
   display.init(9600, false /* serial Kommunikation */, 100, true /* Reset-Pin */);
   display.setRotation(1); // 0 oder 1 für Portrait, 2 oder 3 für Landscape
   display.setTextColor(GxEPD_BLACK);
-  display.setFont(&FreeMono12pt7b);
+  display.setFont(&FreeMonoBold12pt7b);
 }
 
 void loop() {
@@ -72,9 +77,11 @@ void loop() {
   readSensor280();
   calculateValues();
   printValues();
-  displayValues();
+  displayData();
 
-  delay(600000);
+  // delay(600000);
+  esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
+  esp_deep_sleep_start();
 }
 
 void readSensor688(){
@@ -179,25 +186,28 @@ void calculateValues(){
   alt = alt68;
 }
 
-void displayValues(){
+void displayData(){
   //display.setFullWindow();
   display.fillScreen(GxEPD_WHITE);
 
   display.setCursor(35, 20);
-  display.print("Temp:  " + (String)bme68.temperature + "C°");
+  display.print("Temp:  " + (String)temp + "C");
 
   display.setCursor(35, 40);
   if((bme68.pressure / 100.0) < 1000){
-    display.print("Press:  " + (String)(bme68.pressure / 100.0) + "hPa");
+    display.print("Press:  " + (String)pres + "hPa");
   }else{
-    display.print("Press: " + (String)(bme68.pressure / 100.0) + "hPa");
+    display.print("Press: " + (String)pres + "hPa");
   }
 
   display.setCursor(35, 60);
-  display.print("Hum:   " + (String)bme68.humidity + "%");
+  display.print("Hum:   " + (String)hum + "%");
 
   display.setCursor(35, 80);
-  display.print("Gas:   " + (String)(bme68.gas_resistance / 1000.0) + "KOhms");
+  display.print("Gas:   " + (String)gas + "KOhms");
+
+  display.setCursor(35, 100);
+  display.print("Alt:   " + (String)alt + "m");
 
   display.display();
 }
