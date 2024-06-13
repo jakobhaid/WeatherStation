@@ -9,9 +9,15 @@ Dieses Arduino-Projekt implementiert eine Wetterstation, die die Sensoren BME680
 ### Verwendete Hardware
 
 - **BME680 Sensor**: Ein Umweltsensor, der Temperatur, Luftfeuchtigkeit, Luftdruck und Gaswiderstand misst.
+  https://www.reichelt.de/entwicklerboards-sensor-bosch-bme688-debo-sens-bme688-p306628.html
 - **BME280 Sensor**: Ein weiterer Umweltsensor, der Temperatur, Luftfeuchtigkeit und Luftdruck misst.
+  https://www.ebay.de/itm/116172095282
 - **E-Paper-Display**: GxEPD2 Library zur Ansteuerung eines E-Paper-Displays mit SSD1680 Controller.
-- **Arduino Board**: Verwendet wird ein Arduino Mikrocontroller Board, z.B. Arduino Uno oder vergleichbar.
+  https://de.aliexpress.com/item/1005005183232092.html
+- **Arduino Board**: Seeed Studio XIAO ESP32S3
+  https://www.seeedstudio.com/XIAO-ESP32S3-p-5627.html
+- **Lithium Battery Shield**: Battery Shield für eine 18650 Battery
+  https://de.aliexpress.com/item/1005005986332436.html
 
 ### Verwendete Bibliotheken
 
