@@ -4,4 +4,4 @@ weather station, runing on an ESP32S3 with BME680 and BME280 sensors, E-paper Di
 
 
 ## Lizenz
-Dieses Projekt ist unter der [Creative Commons Attribution-NonCommercial 4.0 International License](LICENSE) lizenziert. Das bedeutet, dass du das Material teilen und bearbeiten kannst, solange du es nicht für kommerzielle Zwecke nutzt und mich als Urheber angibst.
+Dieses Projekt ist unter der [Creative Commons Attribution-NonCommercial 4.0 International License](https://creativecommons.org/licenses/by-nc/4.0/) lizenziert. Das bedeutet, dass du das Material teilen und bearbeiten kannst, solange du es nicht für kommerzielle Zwecke nutzt und mich als Urheber angibst.
