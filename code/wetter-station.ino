@@ -6,7 +6,8 @@
 #include <Adafruit_GFX.h>
 #include <BME280I2C.h>
 
-#include <Fonts/FreeMonoBold9pt7b.h>
+#include <Fonts/FreeMono9pt7b.h>
+#include <Fonts/FreeMono12pt7b.h>
 
 //BME688
 #define BME_SDA D4
@@ -25,7 +26,7 @@ GxEPD2_BW<GxEPD2_290_BS, GxEPD2_290_BS::HEIGHT> display(GxEPD2_290_BS(/*CS=5*/ E
 
 // Globale variablen
 float temp(NAN),     hum(NAN),     pres(NAN),     gas(NAN),     alt(NAN);
-float lastTemp(NAN), lastHum(NAN), lastPres(NAN), lastGas(NAN), lastAlt(NAN);
+// float lastTemp(NAN), lastHum(NAN), lastPres(NAN), lastGas(NAN), lastAlt(NAN);
 float temp68(NAN),   hum68(NAN),   pres68(NAN),   gas68(NAN),   alt68(NAN);
 float temp28(NAN),   hum28(NAN),   pres28(NAN);
 
@@ -35,10 +36,8 @@ float temp28(NAN),   hum28(NAN),   pres28(NAN);
 #define SERIAL_PRINTLN(...)    do { if (Serial) { Serial.println(__VA_ARGS__); } } while (0)
 
 void setup() {
-  delay(4000);
-  //SERIAL_DEBUG_BEGIN();
-  Serial.begin(9600);
-  while (!Serial);
+  delay(1000);
+  SERIAL_DEBUG_BEGIN();
 
   Wire.begin();
 
@@ -62,10 +61,10 @@ void setup() {
   bme68.setGasHeater(320, 150); // 320°C für 150 ms
 
   // E-Paper-Display initialisieren
-  display.init(115200, true, 50, false);
+  display.init(9600, false /* serial Kommunikation */, 100, true /* Reset-Pin */);
   display.setRotation(1); // 0 oder 1 für Portrait, 2 oder 3 für Landscape
   display.setTextColor(GxEPD_BLACK);
-  display.setFont(&FreeMonoBold9pt7b);
+  display.setFont(&FreeMono12pt7b);
 }
 
 void loop() {
@@ -73,9 +72,9 @@ void loop() {
   readSensor280();
   calculateValues();
   printValues();
-  displayData();
+  displayValues();
 
-  delay(10000);
+  delay(600000);
 }
 
 void readSensor688(){
@@ -89,7 +88,6 @@ void readSensor688(){
     pres68 = (bme68.pressure / 100.0);
     gas68 = (bme68.gas_resistance / 1000.0);
     alt68 = (bme68.readAltitude(1013.25));
-    SERIAL_PRINTLN("Reading successful on BME688");
   }
 }
 
@@ -99,7 +97,6 @@ void readSensor280(){
 
   try {
     bme28.read(pres28, temp28, hum28, tempUnit, presUnit);
-    SERIAL_PRINTLN("Reading successful on BME280");
   } catch(...) {
     SERIAL_PRINTLN("Failed to perform reading on BME280");
   }
@@ -182,24 +179,24 @@ void calculateValues(){
   alt = alt68;
 }
 
-void displayData(){
-  display.setFullWindow();
+void displayValues(){
+  //display.setFullWindow();
   display.fillScreen(GxEPD_WHITE);
 
-  display.setCursor(40, 20);
+  display.setCursor(35, 20);
   display.print("Temp:  " + (String)bme68.temperature + "C°");
 
-  display.setCursor(40, 40);
+  display.setCursor(35, 40);
   if((bme68.pressure / 100.0) < 1000){
     display.print("Press:  " + (String)(bme68.pressure / 100.0) + "hPa");
   }else{
     display.print("Press: " + (String)(bme68.pressure / 100.0) + "hPa");
   }
 
-  display.setCursor(40, 60);
+  display.setCursor(35, 60);
   display.print("Hum:   " + (String)bme68.humidity + "%");
 
-  display.setCursor(40, 80);
+  display.setCursor(35, 80);
   display.print("Gas:   " + (String)(bme68.gas_resistance / 1000.0) + "KOhms");
 
   display.display();
