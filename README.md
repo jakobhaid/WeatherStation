@@ -37,25 +37,6 @@ Dieses Arduino-Projekt implementiert eine Wetterstation, die die Sensoren BME680
 
 ![Wire Preview](image/wire.png)
 
-Verwende folgende Verdrahtungsanweisungen für den Aufbau der Wetterstation:
-
-- **BME680 Sensor**:
-  - SDA an D4
-  - SCL an D5
-
-- **BME280 Sensor**: 
-  - Verbinde den Sensor entsprechend der I2C-Spezifikation.
-
-- **E-Paper-Display**:
-  - CS an D1
-  - DC an D3
-  - RST an D0
-  - BUSY an D2
-
-- **Battery Shield**:
-  - 5V
-  - GND
-
 ### 3D-Druck für Gehäuse
 
 Das Gehäuse für die Wetterstation kann über folgenden Link heruntergeladen werden: [Link zur 3D-Druck Datei](3dmodel).
