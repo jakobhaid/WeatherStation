@@ -35,7 +35,7 @@ Dieses Arduino-Projekt implementiert eine Wetterstation, die die Sensoren BME680
 
 ### Schaltungsaufbau
 
-![Wire Preview](image/wire.png)
+![Wire Preview](image/wire.png | width=100)
 
 ### 3D-Druck für Gehäuse
 
