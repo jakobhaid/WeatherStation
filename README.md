@@ -1,7 +1,5 @@
 # Wetterstation mit Arduino
 
-![Wetterstation Preview](link-zu-deinem-bild.jpg)
-
 Dieses Arduino-Projekt implementiert eine Wetterstation, die die Sensoren BME680 und BME280 verwendet, um verschiedene Umweltparameter wie Temperatur, Luftfeuchtigkeit, Luftdruck und Gaswiderstand zu messen. Die gemessenen Daten werden auf einem E-Paper-Display angezeigt.
 
 ## Funktionen und Komponenten
@@ -9,15 +7,15 @@ Dieses Arduino-Projekt implementiert eine Wetterstation, die die Sensoren BME680
 ### Verwendete Hardware
 
 - **BME680 Sensor**: Ein Umweltsensor, der Temperatur, Luftfeuchtigkeit, Luftdruck und Gaswiderstand misst.
-  https://www.reichelt.de/entwicklerboards-sensor-bosch-bme688-debo-sens-bme688-p306628.html
+  - https://www.reichelt.de/entwicklerboards-sensor-bosch-bme688-debo-sens-bme688-p306628.html
 - **BME280 Sensor**: Ein weiterer Umweltsensor, der Temperatur, Luftfeuchtigkeit und Luftdruck misst.
-  https://www.ebay.de/itm/116172095282
+  - https://www.ebay.de/itm/116172095282
 - **E-Paper-Display**: GxEPD2 Library zur Ansteuerung eines E-Paper-Displays mit SSD1680 Controller.
-  https://de.aliexpress.com/item/1005005183232092.html
+  - https://de.aliexpress.com/item/1005005183232092.html
 - **Arduino Board**: Seeed Studio XIAO ESP32S3
-  https://www.seeedstudio.com/XIAO-ESP32S3-p-5627.html
-- **Lithium Battery Shield**: Battery Shield für eine 18650 Battery
-  https://de.aliexpress.com/item/1005005986332436.html
+  - https://www.seeedstudio.com/XIAO-ESP32S3-p-5627.html
+- **Battery Shield**: Battery Shield für eine 18650 Battery
+  - https://de.aliexpress.com/item/1005005986332436.html
 
 ### Verwendete Bibliotheken
 
@@ -37,6 +35,8 @@ Dieses Arduino-Projekt implementiert eine Wetterstation, die die Sensoren BME680
 
 ### Schaltungsaufbau
 
+![Wire Preview](image/wire.png)
+
 Verwende folgende Verdrahtungsanweisungen für den Aufbau der Wetterstation:
 
 - **BME680 Sensor**:
@@ -46,15 +46,19 @@ Verwende folgende Verdrahtungsanweisungen für den Aufbau der Wetterstation:
 - **BME280 Sensor**: 
   - Verbinde den Sensor entsprechend der I2C-Spezifikation.
 
-- **E-Paper-Display**: 
+- **E-Paper-Display**:
   - CS an D1
   - DC an D3
   - RST an D0
   - BUSY an D2
 
+- **Battery Shield**:
+  - 5V
+  - GND
+
 ### 3D-Druck für Gehäuse
 
-Das Gehäuse für die Wetterstation kann über folgenden Link heruntergeladen werden: [Link zur 3D-Druck Datei](3DModel).
+Das Gehäuse für die Wetterstation kann über folgenden Link heruntergeladen werden: [Link zur 3D-Druck Datei](3dmodel).
 
 ## Lizenz
 Dieses Projekt ist unter der [Creative Commons Attribution-NonCommercial 4.0 International License](https://creativecommons.org/licenses/by-nc/4.0/) lizenziert. Das bedeutet, dass du das Material teilen und bearbeiten kannst, solange du es nicht für kommerzielle Zwecke nutzt und mich als Urheber angibst.
