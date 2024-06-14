@@ -9,19 +9,19 @@ Dieses Arduino-Projekt implementiert eine Wetterstation, die die Sensoren BME680
 
 - **BME688 Sensor**: Ein Umweltsensor, der Temperatur, Luftfeuchtigkeit, Luftdruck und Gaswiderstand misst.
   - https://www.reichelt.de/entwicklerboards-sensor-bosch-bme688-debo-sens-bme688-p306628.html
-  - <img src="image/parts/bme688.jpg" hight="50px">
+  - <img src="image/parts/bme688.jpg" height="50px">
 - **BME280 Sensor**: Ein weiterer Umweltsensor, der Temperatur, Luftfeuchtigkeit und Luftdruck misst.
   - https://www.ebay.de/itm/116172095282
-  - <img src="image/parts/bme280.jpg" hight="50px">
+  - <img src="image/parts/bme280.jpg" height="50px">
 - **E-Paper-Display**: GxEPD2 Library zur Ansteuerung eines E-Paper-Displays mit SSD1680 Controller.
   - https://de.aliexpress.com/item/1005005183232092.html
-  - <img src="image/parts/e-paper.jpg" hight="50px">
+  - <img src="image/parts/e-paper.jpg" height="50px">
 - **Arduino Board**: Seeed Studio XIAO ESP32S3
   - https://www.seeedstudio.com/XIAO-ESP32S3-p-5627.html
-  - <img src="image/parts/esp32.jpg" hight="50px">
+  - <img src="image/parts/esp32.jpg" height="50px">
 - **Battery Shield**: Battery Shield für eine 18650 Battery
   - https://de.aliexpress.com/item/1005005986332436.html
-  - <img src="image/parts/battery-shield.jpg" hight="50px">
+  - <img src="image/parts/battery-shield.jpg" height="50px">
 
 ### Verwendete Bibliotheken
 
