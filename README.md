@@ -1,5 +1,5 @@
 # Wetterstation mit Arduino
-<img src="image/bild1.jpg" width="40%"><img src="image/bild2.jpg" width="40%">
+<img src="image/bild1.jpg" width="40%">   <img src="image/bild2.jpg" width="40%">
 
 Dieses Arduino-Projekt implementiert eine Wetterstation, die die Sensoren BME680 und BME280 verwendet, um verschiedene Umweltparameter wie Temperatur, Luftfeuchtigkeit, Luftdruck und Gaswiderstand zu messen. Die gemessenen Daten werden auf einem E-Paper-Display angezeigt.
 
