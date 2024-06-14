@@ -3,7 +3,7 @@
 
 Dieses Arduino-Projekt implementiert eine Wetterstation, die die Sensoren BME680 und BME280 verwendet, um verschiedene Umweltparameter wie Temperatur, Luftfeuchtigkeit, Luftdruck und Gaswiderstand zu messen. Die gemessenen Daten werden auf einem E-Paper-Display angezeigt.
 
-## Funktionen und Komponenten
+## Komponenten
 
 ### Verwendete Hardware
 | name | description | Image |
@@ -30,12 +30,13 @@ Dieses Arduino-Projekt implementiert eine Wetterstation, die die Sensoren BME680
 2. **Bibliotheken**: Installiere die oben aufgeführten Bibliotheken in der Arduino IDE über den Bibliotheksmanager.
 
 
-### Schaltungsaufbau
-<img src="image/wire.png" width="50%">
+## Schaltungsaufbau
+<img src="image/wire.png" width="30%">
 
 
-### 3D-Druck für Gehäuse
+## 3D-Druck für Gehäuse
 Das Gehäuse für die Wetterstation kann über folgenden Link heruntergeladen werden: [Link zur 3D-Druck Datei](3dmodel).
+<img src="image/gehaeuse.png" width="50%">
 
 
 ## Lizenz
