@@ -91,7 +91,6 @@ void loop () {
 }
 
 void updateEPD () {
-
   if (bootCount % 48 == 0) {
     display.fillScreen(GxEPD_WHITE);
     displayValuesFull();
