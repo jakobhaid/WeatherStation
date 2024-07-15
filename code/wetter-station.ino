@@ -7,8 +7,6 @@
 #include <BME280I2C.h>
 
 #include <Fonts/FreeMonoBold12pt7b.h>
-// #include <Fonts/FreeMono12pt7b.h>
-// #include <Fonts/FreeMono9pt7b.h>
 
 //BME688
 Adafruit_BME680 bme68;
@@ -40,7 +38,7 @@ float temp28, hum28, pres28;
 
 // Deep Sleep
 #define uS_TO_S_FACTOR 1000000ULL  /* Conversion factor for micro seconds to seconds */
-#define TIME_TO_SLEEP  60 * 30     /* Time ESP32 will go to sleep (in seconds) */
+#define TIME_TO_SLEEP  60 * 15     /* Time ESP32 will go to sleep (in seconds) */
 RTC_DATA_ATTR int bootCount = 0;
 #define BUTTON_PIN_BITMASK 0x100 // 2^8 in hex
 
@@ -54,20 +52,18 @@ void setup () {
   while (!bme68.begin()) { // Standard I2C Adresse 0x76
     SERIAL_PRINTLN("Could not find BME688 sensor!");
     delay(5000);
-  }
+  }// Setze die Sensorparameter für den BME688
+  bme68.setTemperatureOversampling(BME680_OS_16X);
+  bme68.setHumidityOversampling(BME680_OS_1X);
+  bme68.setPressureOversampling(BME680_OS_16X);
+  bme68.setIIRFilterSize(BME680_FILTER_SIZE_127);
+  bme68.setGasHeater(320, 150); // 320°C für 150 ms
 
   // Initialize BME280
   while (!bme28.begin()){ // Standard I2C Adresse 0x77
     SERIAL_PRINTLN("Could not find BME280 sensor!");
     delay(5000);
   }
-
-  // Setze die Sensorparameter für den BME688
-  bme68.setTemperatureOversampling(BME680_OS_2X);
-  bme68.setHumidityOversampling(BME680_OS_1X);
-  bme68.setPressureOversampling(BME680_OS_16X);
-  bme68.setIIRFilterSize(BME680_FILTER_SIZE_127);
-  bme68.setGasHeater(320, 150); // 320°C für 150 ms
 
   // E-Paper-Display initialisieren
   display.init(115200, false /* serial Kommunikation */, 100, true /* Reset-Pin */);
@@ -83,7 +79,7 @@ void loop () {
   printValues();
   updateEPD();
 
-  // delay(10000);
+  // delay(10000); //debug mode
   // esp_sleep_enable_ext0_wakeup(GPIO_NUM_33, 0); //1 = High, 0 = Low
 
   esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
@@ -91,11 +87,27 @@ void loop () {
 }
 
 void updateEPD () {
+  //Generiere text
+  String tempStr = "Temp:  " + String(temp) + "C     " + getTrendSymbol(temp, lastTemp);
+  String presStr = (pres < 1000.0) ? "Pres: " + String(pres) + "hPa   " + getTrendSymbol(pres, lastPres) : "Pres:"  + String(pres) + "hPa   " + getTrendSymbol(pres, lastPres);
+  String humStr = "Hum:   " + String(hum) + "%     " + getTrendSymbol(hum, lastHum);
+  String gasStr = (gas < 10.0) ? "Gas:    " + String(gas) + "KOhms " + getTrendSymbol(gas, lastGas) : "Gas:   " + String(gas) + "KOhms " + getTrendSymbol(gas, lastGas);
+  String altStr = (alt < 100.0) ? "Alt:   " + String(alt) + "m     " + getTrendSymbol(alt, lastAlt) : "Alt:  " + String(alt) + "m     " + getTrendSymbol(alt, lastAlt);
+
+  String data[] = {tempStr, presStr, humStr, gasStr, altStr};
+  int yPos[] = {30, 50, 70, 90, 110};
+
+  display.fillScreen(GxEPD_WHITE);
+
+  for (int i = 0; i < 5; i++) {
+    display.setCursor(15, yPos[i]);
+    display.print(data[i]);
+  }
+  
   if (bootCount % 48 == 0) {
-    display.fillScreen(GxEPD_WHITE);
-    displayValuesFull();
+    display.display();
   } else {
-    displayValuesPartiell();
+    display.display(true);
   }
   ++bootCount;
 }
@@ -163,66 +175,6 @@ void calculateValues () {
   // Gaswert und Höhe sind nur vom BME688 verfügbar
   gas = gas68;
   alt = alt68;
-}
-
-void displayValuesPartiell (){
-  int16_t x1, y1;
-  uint16_t w, h;
-
-  if (temp != lastTemp) {
-    display.getTextBounds(String(temp), 113, 30, &x1, &y1, &w, &h);
-    display.fillRect(x1, y1, w + 1, h, GxEPD_WHITE);
-    display.setCursor(113, 30);
-    display.print(String(temp));
-  }
-  if (pres != lastPres) {
-    int tempPosPres = (pres < 1000.0) ? 99 : 85;
-    display.getTextBounds(String(pres), tempPosPres, 50, &x1, &y1, &w, &h);
-    display.fillRect(x1, y1, w + 1, h, GxEPD_WHITE);
-    display.setCursor(tempPosPres, 50);
-    display.print(String(pres));
-  }
-  if (hum != lastHum) {
-    display.getTextBounds(String(hum), 113, 70, &x1, &y1, &w, &h);
-    display.fillRect(x1, y1, w + 1, h, GxEPD_WHITE);
-    display.setCursor(113, 70);
-    display.print(String(hum));
-  }
-  if (gas != lastGas) {
-    display.getTextBounds(String(gas), 113, 90, &x1, &y1, &w, &h);
-    display.fillRect(x1, y1, w + 1, h, GxEPD_WHITE);
-    display.setCursor(113, 90);
-    display.print(String(gas));
-  }
-  if (alt == lastAlt) {
-    int tempPosAlt = (alt < 100.0) ? 113 : 99;
-    display.getTextBounds(String(alt), tempPosAlt, 110, &x1, &y1, &w, &h);
-    display.fillRect(x1, y1, w + 1, h, GxEPD_WHITE);
-    display.setCursor(tempPosAlt, 110);
-    display.print(String(alt));
-  }
-
-  // Update display with partial update
-  display.display(true); // partial update
-}
-
-void displayValuesFull (){
-  //Generiere text
-  String tempStr = "Temp:  " + String(temp) + "C     " + getTrendSymbol(temp, lastTemp);
-  String presStr = (pres < 1000.0) ? "Pres: " + String(pres) + "hPa   " + getTrendSymbol(pres, lastPres) : "Pres:"  + String(pres) + "hPa   " + getTrendSymbol(pres, lastPres);
-  String humStr = "Hum:   " + String(hum) + "%     " + getTrendSymbol(hum, lastHum);
-  String gasStr = "Gas:   " + String(gas) + "KOhms " + getTrendSymbol(gas, lastGas);
-  String altStr = (alt < 100.0) ? "Alt:   " + String(alt) + "m     " + getTrendSymbol(alt, lastAlt) : "Alt:  " + String(alt) + "m     " + getTrendSymbol(alt, lastAlt);
-
-  String data[] = {tempStr, presStr, humStr, gasStr, altStr};
-  int yPos[] = {30, 50, 70, 90, 110};
-
-  for (int i = 0; i < 5; i++) {
-    display.setCursor(15, yPos[i]);
-    display.print(data[i]);
-  }
-  // display.drawLine(50, 120, 100, 120, GxEPD_BLACK);
-  display.display();
 }
 
 String getTrendSymbol (float current, float previous) {
