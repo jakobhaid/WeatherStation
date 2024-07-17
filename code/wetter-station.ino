@@ -3,10 +3,14 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME680.h>
 #include <GxEPD2_BW.h>
+#include <Fonts/FreeMonoBold12pt7b.h>
+#include <Fonts/FreeMono9pt7b.h>
 #include <Adafruit_GFX.h>
 #include <BME280I2C.h>
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <Arduino_JSON.h>
 
-#include <Fonts/FreeMonoBold12pt7b.h>
 
 //BME688
 Adafruit_BME680 bme68;
@@ -31,6 +35,7 @@ RTC_DATA_ATTR float temp,   hum,   pres,   gas,   alt;
 RTC_DATA_ATTR float lastTemp, lastHum, lastPres, lastGas, lastAlt;
 float temp68, hum68, pres68, gas68, alt68;
 float temp28, hum28, pres28;
+String tempWeb, humWeb, presWeb;
 
 // Makro für Serial-Ausgaben
 #define SERIAL_PRINT(...)      do { if (Serial) { Serial.print(__VA_ARGS__); } } while (0)
@@ -41,6 +46,14 @@ float temp28, hum28, pres28;
 #define TIME_TO_SLEEP  60 * 15     /* Time ESP32 will go to sleep (in seconds) */
 RTC_DATA_ATTR int bootCount = 0;
 #define BUTTON_PIN_BITMASK 0x100 // 2^8 in hex
+
+const char* ssid = "WiFi Name";
+const char* password = "WiFi password";
+String openWeatherMapApiKey = "openWeatherMapApiKey";
+String city = "city";
+String countryCode = "countryCode";
+String jsonBuffer;
+
 
 void setup () {
   try {Serial.begin(115200);
@@ -69,12 +82,22 @@ void setup () {
   display.init(115200, false /* serial Kommunikation */, 100, true /* Reset-Pin */);
   display.setRotation(3);
   display.setTextColor(GxEPD_BLACK);
-  display.setFont(&FreeMonoBold12pt7b);
+
+  // WiFi initialisieren
+  WiFi.begin(ssid, password);
+  SERIAL_PRINTLN("Connecting");
+  int wait = 0;
+  while(WiFi.status() != WL_CONNECTED && wait < 10) {
+    delay(500);
+    SERIAL_PRINT(".");
+    wait = wait + 1;
+  }
 }
 
 void loop () {
   readSensor688();
   readSensor280();
+  readWeb();
   calculateValues();
   printValues();
   updateEPD();
@@ -86,22 +109,55 @@ void loop () {
   esp_deep_sleep_start();
 }
 
+void readWeb () {
+  if(WiFi.status()== WL_CONNECTED){
+    String serverPath = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "," + countryCode + "&appid=" + openWeatherMapApiKey + "&units=metric";
+    
+    jsonBuffer = httpGETRequest(serverPath.c_str());
+    JSONVar myObject = JSON.parse(jsonBuffer);
+
+    // JSON.typeof(jsonVar) can be used to get the type of the var
+    if (JSON.typeof(myObject) == "undefined") {
+      SERIAL_PRINTLN("Parsing input failed!");
+      return;
+    }
+
+    tempWeb = String((double)myObject["main"]["temp"]);
+    presWeb = String((double)myObject["main"]["pressure"]);
+    humWeb =  String((double)myObject["main"]["humidity"]);
+  }
+  else {
+    tempWeb = "nan";
+    presWeb = "nan";
+    humWeb =  "nan";
+  }
+}
+
 void updateEPD () {
   //Generiere text
   String tempStr = "Temp:  " + String(temp) + "C     " + getTrendSymbol(temp, lastTemp);
   String presStr = (pres < 1000.0) ? "Pres: " + String(pres) + "hPa   " + getTrendSymbol(pres, lastPres) : "Pres:"  + String(pres) + "hPa   " + getTrendSymbol(pres, lastPres);
   String humStr = "Hum:   " + String(hum) + "%     " + getTrendSymbol(hum, lastHum);
-  String gasStr = (gas < 10.0) ? "Gas:    " + String(gas) + "KOhms " + getTrendSymbol(gas, lastGas) : "Gas:   " + String(gas) + "KOhms " + getTrendSymbol(gas, lastGas);
+  String gasStr = (gas < 10.0) ? "Gas:    " + String(gas) + "KOhms " + getTrendSymbol(gas, lastGas) : (gas < 100.0) ? "Gas:   " + String(gas) + "KOhms " + getTrendSymbol(gas, lastGas) : "Gas:  " + String(gas) + "KOhms " + getTrendSymbol(gas, lastGas);
   String altStr = (alt < 100.0) ? "Alt:   " + String(alt) + "m     " + getTrendSymbol(alt, lastAlt) : "Alt:  " + String(alt) + "m     " + getTrendSymbol(alt, lastAlt);
 
   String data[] = {tempStr, presStr, humStr, gasStr, altStr};
-  int yPos[] = {30, 50, 70, 90, 110};
+  int yPos[] = {18, 38, 58, 78, 98};
 
   display.fillScreen(GxEPD_WHITE);
+  display.setFont(&FreeMonoBold12pt7b);
 
   for (int i = 0; i < 5; i++) {
     display.setCursor(15, yPos[i]);
     display.print(data[i]);
+  }
+
+  display.setFont(&FreeMono9pt7b);
+  display.setCursor(15, 118);
+  if (tempWeb != "nan") {
+    display.print(String(tempWeb) + "C " + String(presWeb) + "hPa " + String(humWeb) + "%");
+  } else {
+    display.print("no conection");
   }
   
   if (bootCount % 48 == 0) {
@@ -149,7 +205,12 @@ void printValues () {
   //print BME280
   SERIAL_PRINT("Sensor BME280: Temp = " + String(temp28) + " *C\t");
   SERIAL_PRINT("Pres = " + String(pres28) + " hPa\t");
-  SERIAL_PRINT("Hum = " + String(hum28) + " %");
+  SERIAL_PRINTLN("Hum = " + String(hum28) + " %");
+
+  //print Web
+  SERIAL_PRINT("Web Data:      Temp = " + tempWeb + " *C\t");
+  SERIAL_PRINT("Pres = " + presWeb + " hPa  \t");
+  SERIAL_PRINT("Hum = " + humWeb + " %");
 
   SERIAL_PRINTLN();
 }
@@ -164,6 +225,7 @@ void calculateValues () {
 
   // Durchschnittstemperatur berechnen
   temp = !isnan(temp68) ? (isnan(temp28) ? temp68 : (temp68 + temp28) / 2.0) : temp28;
+  temp = temp - 2;
 
   // Durchschnittsfeuchtigkeit berechnen   deaktiviert
   // temp = !isnan(hum68) ? (isnan(hum28) ? hum68 : (hum68 + hum28) / 2.0) : hum28;
@@ -180,4 +242,31 @@ void calculateValues () {
 String getTrendSymbol (float current, float previous) {
   if (isnan(previous)) return "";  // No previous value
   return (current > previous) ? "+" : ((current < previous) ? "-" : "=");
+}
+
+String httpGETRequest(const char* serverName) {
+  WiFiClient client;
+  HTTPClient http;
+    
+  // Your Domain name with URL path or IP address with path
+  http.begin(client, serverName);
+  
+  // Send HTTP POST request
+  int httpResponseCode = http.GET();
+  
+  String payload = "{}"; 
+  
+  if (httpResponseCode>0) {
+    SERIAL_PRINT("HTTP Response code: ");
+    SERIAL_PRINTLN(httpResponseCode);
+    payload = http.getString();
+  }
+  else {
+    SERIAL_PRINT("Error code: ");
+    SERIAL_PRINTLN(httpResponseCode);
+  }
+  // Free resources
+  http.end();
+
+  return payload;
 }
