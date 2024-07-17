@@ -164,6 +164,7 @@ void calculateValues () {
 
   // Durchschnittstemperatur berechnen
   temp = !isnan(temp68) ? (isnan(temp28) ? temp68 : (temp68 + temp28) / 2.0) : temp28;
+  temp = temp - 2; // eigene kalibrierung
 
   // Durchschnittsfeuchtigkeit berechnen   deaktiviert
   // temp = !isnan(hum68) ? (isnan(hum28) ? hum68 : (hum68 + hum28) / 2.0) : hum28;
