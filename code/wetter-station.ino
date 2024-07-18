@@ -157,7 +157,7 @@ void updateEPD () {
   if (tempWeb != "nan") {
     display.print(String(tempWeb) + "C " + String(presWeb) + "hPa " + String(humWeb) + "%");
   } else {
-    display.print("no conection");
+    display.print("no connection");
   }
   
   if (bootCount % 48 == 0) {
