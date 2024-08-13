@@ -43,4 +43,4 @@ Das Gehäuse für die Wetterstation kann über folgenden Link heruntergeladen we
 Dieses Projekt ist unter der [Creative Commons Attribution-NonCommercial 4.0 International License](https://creativecommons.org/licenses/by-nc/4.0/) lizenziert. Das bedeutet, dass du das Material teilen und bearbeiten kannst, solange du es nicht für kommerzielle Zwecke nutzt und mich als Urheber angibst.
 
 ---
-Autor: [Jakob](https://github.com/jakobhaid)
+Autor: [Jakob](https://github.com/jakobhaid) [Instagram](https://www.instagram.com/james__hi/) [Youtube](https://www.youtube.com/@Jakobhaidlauf) [Website](https://haidlauf.me/)
