@@ -5,7 +5,6 @@
 #include <GxEPD2_BW.h>
 #include <Adafruit_GFX.h>
 #include <BME280I2C.h>
-
 #include <Fonts/FreeMonoBold12pt7b.h>
 
 //BME688
@@ -37,22 +36,20 @@ float temp28, hum28, pres28;
 #define SERIAL_PRINTLN(...)    do { if (Serial) { Serial.println(__VA_ARGS__); } } while (0)
 
 // Deep Sleep
-#define uS_TO_S_FACTOR 1000000ULL  /* Conversion factor for micro seconds to seconds */
-#define TIME_TO_SLEEP  60 * 15     /* Time ESP32 will go to sleep (in seconds) */
+#define uS_TO_S_FACTOR 1000000ULL  // Conversion factor for micro seconds to seconds
+#define TIME_TO_SLEEP  60 * 15     // Time ESP32 will go to sleep (in seconds)
 RTC_DATA_ATTR int bootCount = 0;
-#define BUTTON_PIN_BITMASK 0x100 // 2^8 in hex
+#define BUTTON_PIN_BITMASK 0x100   // 2^8 in hex
 
 void setup () {
-  try {Serial.begin(115200);
-  } catch (...){}
+  try { Serial.begin(115200); } catch (...){}
 
   Wire.begin();
 
   // Initialize BME688
-  while (!bme68.begin()) { // Standard I2C Adresse 0x76
-    SERIAL_PRINTLN("Could not find BME688 sensor!");
-    delay(5000);
-  }// Setze die Sensorparameter für den BME688
+  try {bme68.begin();} 
+  catch (...){ SERIAL_PRINTLN("Could not find BME688 sensor!"); }
+  // Setze die Sensorparameter für den BME688
   bme68.setTemperatureOversampling(BME680_OS_16X);
   bme68.setHumidityOversampling(BME680_OS_1X);
   bme68.setPressureOversampling(BME680_OS_16X);
@@ -60,10 +57,8 @@ void setup () {
   bme68.setGasHeater(320, 150); // 320°C für 150 ms
 
   // Initialize BME280
-  while (!bme28.begin()){ // Standard I2C Adresse 0x77
-    SERIAL_PRINTLN("Could not find BME280 sensor!");
-    delay(5000);
-  }
+  try {bme28.begin();} 
+  catch (...){ SERIAL_PRINTLN("Could not find BME280 sensor!"); }
 
   // E-Paper-Display initialisieren
   display.init(115200, false /* serial Kommunikation */, 100, true /* Reset-Pin */);
@@ -91,7 +86,7 @@ void updateEPD () {
   String tempStr = "Temp:  " + String(temp) + "C     " + getTrendSymbol(temp, lastTemp);
   String presStr = (pres < 1000.0) ? "Pres: " + String(pres) + "hPa   " + getTrendSymbol(pres, lastPres) : "Pres:"  + String(pres) + "hPa   " + getTrendSymbol(pres, lastPres);
   String humStr = "Hum:   " + String(hum) + "%     " + getTrendSymbol(hum, lastHum);
-  String gasStr = (gas < 10.0) ? "Gas:    " + String(gas) + "KOhms " + getTrendSymbol(gas, lastGas) : "Gas:   " + String(gas) + "KOhms " + getTrendSymbol(gas, lastGas);
+  String gasStr = (gas < 10.0) ? "Gas:    " + String(gas) + "KOhms " + getTrendSymbol(gas, lastGas) : (gas < 100.0) ? "Gas:   " + String(gas) + "KOhms " + getTrendSymbol(gas, lastGas) : "Gas:  " + String(gas) + "KOhms " + getTrendSymbol(gas, lastGas);
   String altStr = (alt < 100.0) ? "Alt:   " + String(alt) + "m     " + getTrendSymbol(alt, lastAlt) : "Alt:  " + String(alt) + "m     " + getTrendSymbol(alt, lastAlt);
 
   String data[] = {tempStr, presStr, humStr, gasStr, altStr};
@@ -104,11 +99,8 @@ void updateEPD () {
     display.print(data[i]);
   }
   
-  if (bootCount % 48 == 0) {
-    display.display();
-  } else {
-    display.display(true);
-  }
+  if (bootCount % 48 == 0) { display.display(); } 
+  else {display.display(true);}
   ++bootCount;
 }
 
@@ -130,9 +122,8 @@ void readSensor280 () {
   BME280::TempUnit tempUnit(BME280::TempUnit_Celsius);
   BME280::PresUnit presUnit(BME280::PresUnit_hPa);
 
-  try {
-    bme28.read(pres28, temp28, hum28, tempUnit, presUnit);
-  } catch (...) {
+  try { bme28.read(pres28, temp28, hum28, tempUnit, presUnit); }
+  catch (...) {
     SERIAL_PRINTLN("Failed to perform reading on BME280");
     temp28 = hum28 = pres28 = NAN;
   }
@@ -156,15 +147,11 @@ void printValues () {
 
 void calculateValues () {
   // Store previous values
-  lastTemp = temp;
-  lastHum = hum;
-  lastPres = pres;
-  lastGas = gas;
-  lastAlt = alt;
+  lastTemp = temp, lastHum = hum, lastPres = pres, lastGas = gas, lastAlt = alt;
 
   // Durchschnittstemperatur berechnen
   temp = !isnan(temp68) ? (isnan(temp28) ? temp68 : (temp68 + temp28) / 2.0) : temp28;
-  temp = temp - 2; // eigene kalibrierung
+  temp = temp - 6; // eigene kalibrierung
 
   // Durchschnittsfeuchtigkeit berechnen   deaktiviert
   // temp = !isnan(hum68) ? (isnan(hum28) ? hum68 : (hum68 + hum28) / 2.0) : hum28;
