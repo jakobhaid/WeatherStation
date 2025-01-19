@@ -9,7 +9,7 @@ Dieses Arduino-Projekt implementiert eine Wetterstation, die die Sensoren BME680
 | name | description | Image |
 | --- | --- | --- |
 | **BME688 Sensor**  | Ein Umweltsensor, der Temperatur, Luftfeuchtigkeit, Luftdruck und Gaswiderstand misst.  |<img src="../images/components/bme688.jpg" height="70px">|
-| **BME280 Sensor**  | Ein weiterer Umweltsensor, der Temperatur, Luftfeuchtigkeit und Luftdruck misst.  |<img src="../images/components/bme280.jpg" height="70px">|
+| **BMP280 Sensor**  | Ein weiterer Umweltsensor, der Temperatur und Luftdruck misst.  |<img src="../images/components/bme280.jpg" height="70px">|
 | **E-Paper Display**  | GxEPD2 Library zur Ansteuerung eines E-Paper-Displays mit SSD1680 Controller.  |<img src="../images/components/e-paper.jpg" height="70px">|
 | **ESP32**  | Seeed Studio XIAO ESP32S3  |<img src="../images/components/esp32.jpg" height="70px">|
 | **Battery Shield**  | Battery Shield für eine 18650 Battery.  |<img src="../images/components/battery-shield.jpg" height="70px">|
