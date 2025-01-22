@@ -68,7 +68,7 @@ void setup () {
 
   // WiFi initialisieren
   WiFi.begin(ssid, password);
-  Serial.printLN("Connecting");
+  Serial.println("Connecting");
   int wait = 0;
   while(WiFi.status() != WL_CONNECTED && wait < 10) {
     delay(500);
@@ -100,7 +100,7 @@ void readWeb () {
 
     // JSON.typeof(jsonVar) can be used to get the type of the var
     if (JSON.typeof(myObject) == "undefined") {
-      Serial.printLN("Parsing input failed!");
+      Serial.println("Parsing input failed!");
       return;
     }
 
@@ -181,7 +181,7 @@ void printValues () {
 
   //print BMP280
   Serial.print("Sensor BMP280: Temp = " + String(temp28) + " *C\t");
-  Serial.print("Pres = " + String(pres28) + " hPa\t");
+  Serial.println("Pres = " + String(pres28) + " hPa\t");
 
   //print Web
   Serial.print("Web Data:      Temp = " + tempWeb + " *C\t");
@@ -230,12 +230,12 @@ String httpGETRequest(const char* serverName) {
   
   if (httpResponseCode>0) {
     Serial.print("HTTP Response code: ");
-    Serial.printLN(httpResponseCode);
+    Serial.println(httpResponseCode);
     payload = http.getString();
   }
   else {
     Serial.print("Error code: ");
-    Serial.printLN(httpResponseCode);
+    Serial.println(httpResponseCode);
   }
   // Free resources
   http.end();
